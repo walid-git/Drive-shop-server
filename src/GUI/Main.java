@@ -7,13 +7,12 @@ import Util.Order;
 import Util.Product;
 import Util.Queue;
 import backend.Robot;
-import database.DBHandler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import Network.RobotsCoroller;
+import Network.RobotsController;
 
 import java.util.ArrayList;
 
@@ -25,7 +24,29 @@ public class Main extends Application {
     public ControllerOrders controllerOrders;
     public static volatile Queue<Order> ordersQueue = new Queue<Order>();
     public static volatile Queue<Robot> robotsQueue = new Queue<Robot>();
+    public static OrdersServer ordersServer;
+    public static RobotsController robotsController;
+    public static ProductServer productServer;
 
+    public static void main(String[] args) {
+        initServers();
+        startServers();
+        robotsQueue.add(new Robot(1, "192.168.43.130", 1234));
+        launch(args);
+//        DBHandler handler = new DBHandler();
+    }
+
+    private static void startServers() {
+        productServer.start();
+        ordersServer.start();
+        robotsController.start();
+    }
+
+    private static void initServers() {
+        ordersServer = new OrdersServer(ordersQueue);
+        robotsController = new RobotsController(ordersQueue, robotsQueue);
+        productServer = new ProductServer(randomProducts());
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -41,26 +62,13 @@ public class Main extends Application {
     }
 
 
-    public static void main(String[] args) {
-        OrdersServer.setOrdersQueue(ordersQueue);
-        RobotsCoroller.setOrdersQueue(ordersQueue);
-        RobotsCoroller.setRobotsQueue(robotsQueue);
-        ProductServer.setProducts(randomProducts());
-        ProductServer.startProductsServer();
-        OrdersServer.startOrdersServer();
-        RobotsCoroller.start();
-        robotsQueue.add(new Robot(1, "192.168.43.130", 1234));
-        launch(args);
-//        DBHandler handler = new DBHandler();
-    }
-
     @Override
     public void stop() throws Exception {
         super.stop();
-        System.out.println("calling stop");
-        ProductServer.stop();
-        OrdersServer.stop();
-        RobotsCoroller.stop();
+        System.out.println("calling kill");
+        productServer.kill();
+        ordersServer.kill();
+        robotsController.kill();
     }
 
     public static ArrayList<Product> randomProducts() {

@@ -9,12 +9,21 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class ProductServer {
+public class ProductServer extends Thread {
 
-    private static ArrayList<Product> products;
-    static Thread currentThread;
-    static ServerSocket serverSocket;
-    static volatile boolean runninig=true;
+    private ArrayList<Product> products;
+    ServerSocket serverSocket;
+    volatile boolean runninig = true;
+
+    public ProductServer(ArrayList<Product> products) {
+        super("ProductsServerThread");
+        this.products = products;
+    }
+
+    public ProductServer() {
+        super("ProductsServerThread");
+    }
+
     public static byte[] imgToBytes(String file) {
         File imgFile = new File(file);
         try {
@@ -28,56 +37,51 @@ public class ProductServer {
         }
     }
 
-    public static void setProducts(ArrayList<Product> products) {
-        ProductServer.products = products;
+    public void setProducts(ArrayList<Product> products) {
+        this.products = products;
     }
 
-    public static void stop() {
-        runninig = false;
+    public void kill() {
+        this.runninig = false;
         try {
-            serverSocket.close();
+            this.serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void startProductsServer() {
-      currentThread =  new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    serverSocket = new ServerSocket(5563);
-                    while (runninig) {
-                        System.out.println("Products Server : waiting for client...");
-                        Socket socket = serverSocket.accept();
-                        System.out.println("Products Server : Client connected");
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
+    @Override
+    public void run() {
+        try {
+            serverSocket = new ServerSocket(5563);
+            while (runninig) {
+                System.out.println("Products Server : waiting for client...");
+                Socket socket = serverSocket.accept();
+                System.out.println("Products Server : Client connected");
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
 
-                                try {
-                                    ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-                                    ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-                                    for (Product p : products)
-                                        outputStream.writeObject(p);
-                                    outputStream.flush();
-                                    System.out.println("Products Server : Product sent");
-                                    inputStream.close();
-                                    outputStream.close();
-                                    socket.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                        try {
+                            ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+                            ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+                            for (Product p : products)
+                                outputStream.writeObject(p);
+                            outputStream.flush();
+                            System.out.println("Products Server : Product sent");
+                            inputStream.close();
+                            outputStream.close();
+                            socket.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
-                            }
-                        }).start();
                     }
-                } catch (IOException e) {
-                    System.out.println("Products server shut down");
-                }
+                }).start();
             }
-        });
-      currentThread.start();
-
+        } catch (IOException e) {
+            System.out.println("Products server shut down");
+        }
     }
 }
+
