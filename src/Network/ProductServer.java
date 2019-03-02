@@ -1,6 +1,7 @@
 package Network;
 
 import Util.Product;
+import database.DBHandler;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -14,10 +15,15 @@ public class ProductServer extends Thread {
     private ArrayList<Product> products;
     ServerSocket serverSocket;
     volatile boolean runninig = true;
+    DBHandler handler;
 
     public ProductServer(ArrayList<Product> products) {
         super("ProductsServerThread");
         this.products = products;
+    }
+
+    public ProductServer(DBHandler handler) {
+        this.handler = handler;
     }
 
     public ProductServer() {
@@ -57,6 +63,8 @@ public class ProductServer extends Thread {
             while (runninig) {
                 System.out.println("Products Server : waiting for client...");
                 Socket socket = serverSocket.accept();
+                if (handler != null)
+                    products = handler.querryProducts();
                 System.out.println("Products Server : Client connected");
                 new Thread(new Runnable() {
                     @Override

@@ -1,7 +1,9 @@
-package GUI.controller;
+package GUI.Controller;
 
-import GUI.MyListCell;
+import GUI.OrderListCell;
 import Util.Order;
+import Util.Queue;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,11 +17,13 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import GUI.Main;
+import observer.Observer;
 
-public class ControllerOrders {
+public class ControllerOrders implements Observer<Queue<Order>>{
 
 
-    public volatile ObservableList<Order> orders = FXCollections.observableArrayList();
+    public volatile ObservableList<Order> orders;
+
     @FXML
     private Label orderIdLabel;
 
@@ -34,15 +38,15 @@ public class ControllerOrders {
 
     @FXML
     void initialize() {
+        orders = FXCollections.observableList(Main.ordersQueue);
+        Main.ordersQueue.addObserver(this);
         ordersListView.setItems(orders);
         ordersListView.setCellFactory(new Callback<ListView<Order>, ListCell<Order>>() {
             @Override
             public ListCell<Order> call(ListView<Order> param) {
-
-                return new MyListCell();
+                return new OrderListCell();
             }
         });
-
     }
 
     @FXML
@@ -55,4 +59,10 @@ public class ControllerOrders {
         stage.show();
     }
 
+    @Override
+    public void onChange(Queue<Order> obj) {
+        System.out.println("OBSEREV ::: Calling on change");
+        Platform.runLater(()->ordersListView.setItems(FXCollections.observableList(obj)));
+
+    }
 }

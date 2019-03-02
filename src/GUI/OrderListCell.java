@@ -7,7 +7,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-public class MyListCell extends ListCell<Order> {
+public class OrderListCell extends ListCell<Order> {
+
+
     @Override
     protected void updateItem(Order item, boolean empty) {
         super.updateItem(item, empty);
@@ -17,7 +19,7 @@ public class MyListCell extends ListCell<Order> {
         } else {
             Label id = new Label(item.getId() + "");
             id.setFont(Font.font("", FontWeight.BOLD, 25));
-            VBox vBox = new VBox(id, new Label(item.getCustomerId() + ""));
+            VBox vBox = new VBox(id, new Label("User: "+item.getCustomerId() + ""));
             setGraphic(vBox);
             System.out.println("UPDATE ITEM :: accessed by : "+Thread.currentThread().getName());
         }

@@ -29,7 +29,7 @@ public class RobotsController extends Thread {
                 Robot r = this.robotsQueue.pop();
                 System.out.println("Robot controllerOrders : Robot available");
                 r.processOrder(order);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 System.out.println("Robot controller interrupted ");
                 break;
             }
