@@ -1,6 +1,6 @@
 package GUI;
 
-import Util.Order;
+import Shared.Order;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.VBox;
@@ -21,7 +21,6 @@ public class OrderListCell extends ListCell<Order> {
             id.setFont(Font.font("", FontWeight.BOLD, 25));
             VBox vBox = new VBox(id, new Label("User: "+item.getCustomerId() + ""));
             setGraphic(vBox);
-            System.out.println("UPDATE ITEM :: accessed by : "+Thread.currentThread().getName());
         }
     }
 }

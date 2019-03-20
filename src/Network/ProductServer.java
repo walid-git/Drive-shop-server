@@ -1,10 +1,8 @@
 package Network;
 
-import Util.Product;
+import Shared.Product;
 import database.DBHandler;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -30,18 +28,6 @@ public class ProductServer extends Thread {
         super("ProductsServerThread");
     }
 
-    public static byte[] imgToBytes(String file) {
-        File imgFile = new File(file);
-        try {
-            BufferedImage img = ImageIO.read(imgFile);
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(img, "png", outputStream);
-            return outputStream.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     public void setProducts(ArrayList<Product> products) {
         this.products = products;
@@ -88,7 +74,7 @@ public class ProductServer extends Thread {
                 }).start();
             }
         } catch (IOException e) {
-            System.out.println("Products server shut down");
+            System.out.println("Orders server shut down "+e.toString());
         }
     }
 }

@@ -1,7 +1,7 @@
 package Network;
 
-import Util.Order;
-import Util.Queue;
+import Shared.Order;
+import backend.Queue;
 import backend.Robot;
 
 import java.util.LinkedList;

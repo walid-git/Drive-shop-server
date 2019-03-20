@@ -6,6 +6,8 @@ import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 public abstract class ImgUtils {
@@ -20,6 +22,19 @@ public abstract class ImgUtils {
         }
         return SwingFXUtils.toFXImage(bImage, null);
 
+    }
+
+    public static byte[] imgToBytes(String file) {
+        File imgFile = new File(file);
+        try {
+            BufferedImage img = ImageIO.read(imgFile);
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(img, "png", outputStream);
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

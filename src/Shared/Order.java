@@ -1,4 +1,4 @@
-package Util;
+package Shared;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -35,6 +35,10 @@ public class Order implements Serializable {
 
     public void setCustomerId(int customerId) {
         this.customerId = customerId;
+    }
+
+    public void setSendableSubOrders(ArrayList<SendableSubOrder> sendableSubOrders) {
+        this.sendableSubOrders = sendableSubOrders;
     }
 
     public ArrayList<SendableSubOrder> getSendableSubOrders() {

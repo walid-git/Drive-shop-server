@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="50.0" prefWidth="339.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.Controller.ControllerSubOrderListCell">
+   <children>
+      <Label fx:id="quantity" layoutX="178.0" layoutY="13.0" prefHeight="21.0" prefWidth="57.0" text="Label" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="13.0" />
+      <ImageView fx:id="icon" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <image>
+            <Image url="@../../../../../Downloads/product.png" />
+         </image>
+      </ImageView>
+      <VBox layoutX="70.0" layoutY="1.0" prefHeight="50.0" prefWidth="194.0" spacing="4.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="1.0">
+         <children>
+            <Label fx:id="name" text="Product name">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="id" text="132" />
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

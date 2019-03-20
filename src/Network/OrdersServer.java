@@ -1,14 +1,13 @@
 package Network;
 
-import Util.Order;
-import Util.Queue;
+import Shared.Order;
+import backend.Queue;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.LinkedList;
 
 public class OrdersServer extends Thread{
 
@@ -74,7 +73,7 @@ public class OrdersServer extends Thread{
             }
 
         } catch (IOException e) {
-            System.out.println("Orders server shut down");
+            System.out.println("Orders server shut down "+e.toString());
         }
     }
 

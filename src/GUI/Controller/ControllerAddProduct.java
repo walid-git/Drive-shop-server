@@ -1,8 +1,9 @@
 package GUI.Controller;
 
+import GUI.ErrorDialog;
+import GUI.ImgUtils;
 import GUI.Main;
-import Network.ProductServer;
-import Util.Product;
+import Shared.Product;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -11,13 +12,19 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.sql.SQLException;
 
 public class ControllerAddProduct {
-
 
     private ControllerProducts parent;
 
     private boolean edit = false;
+
+    @FXML
+    private TextField xLocation;
+
+    @FXML
+    private TextField yLocation;
 
     @FXML
     private TextField path;
@@ -59,33 +66,46 @@ public class ControllerAddProduct {
 
     @FXML
     void add(ActionEvent event) {
-        if (checkInput()) {
-            Product p = new Product(0,
-                    Integer.parseInt(price.getText()),
-                    name.getText(),
-                    description.getText(),
-                    ProductServer.imgToBytes(path.getText()));
-            if (!edit) {
-                int index = Main.handler.insertProduct(p, path.getText());
-                if (index > 0) {
-                    p.setId(index);
-                    parent.products.add(p);
-                }
+        try {
+            if (checkInput()) {
+                Product p = new Product(0,
+                        Integer.parseInt(price.getText()),
+                        name.getText(),
+                        description.getText(),
+                        path.getText(),
+                        ImgUtils.imgToBytes(path.getText()),
+                        Integer.parseInt(xLocation.getText()),
+                        Integer.parseInt(yLocation.getText()));
+                if (!edit) {
+                    int index = Main.handler.insertProduct(p);
+                    if (index > 0) {
+                        p.setId(index);
+                        parent.products.add(p);
+                    }
 
-            } else {
-                Product selected = parent.productsListView.getSelectionModel().getSelectedItem();
-                p.setId(selected.getId());
-                int index = Main.handler.upadteProduct(selected, p, path.getText());
-                if (index > 0) {
-                    System.out.println(index+" update");
-                    parent.products.set(parent.productsListView.getSelectionModel().getSelectedIndex(), p);
+                } else {
+                    Product selected = parent.productsListView.getSelectionModel().getSelectedItem();
+                    p.setId(selected.getId());
+                    int index = Main.handler.upadteProduct(selected, p, path.getText());
+                    if (index > 0) {
+                        System.out.println(index + " update");
+                        parent.products.set(parent.productsListView.getSelectionModel().getSelectedIndex(), p);
+                    }
                 }
+                cancel(event);
             }
-            cancel(event);
+        } catch (SQLException e) {
+            ErrorDialog.show(e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            ErrorDialog.show("Input error");
         }
+
     }
 
     private boolean checkInput() {
+        //TODO : check data validity here
+
         return true;
     }
 
@@ -100,9 +120,10 @@ public class ControllerAddProduct {
             Product selected = parent.productsListView.getSelectionModel().getSelectedItem();
             name.setText(selected.getName());
             description.setText(selected.getDescription());
-            price.setText(selected.getPrice()+"");
-            //TODO : get real path
-            path.setText("/home/walid/Downloads/products/img2.png");
+            price.setText(selected.getPrice() + "");
+            path.setText(selected.getIconPath());
+            xLocation.setText(selected.getLocation().getX()+"");
+            yLocation.setText(selected.getLocation().getY()+"");
         }
 
     }
