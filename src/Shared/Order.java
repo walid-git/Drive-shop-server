@@ -1,24 +1,52 @@
 package Shared;
 
+import Observer.Observable;
+import Observer.Observer;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Order implements Serializable {
+public class Order implements Serializable, Observable {
     private int id;
-    private int customerId;
+    private long customerId;
     private ArrayList<SendableSubOrder> sendableSubOrders;
 
-    public Order(int id, int customerId) {
+    public enum State{NEW,PENDING,IN_PROGRESS,READY}
+
+    private State orderState;
+
+    ArrayList<Observer> observers = new ArrayList<>();
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer o : observers) {
+            o.update(this);
+        }
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    public Order(int id, long customerId) {
         this.setId(id);
         this.setCustomerId(customerId);
+        orderState = State.NEW;
         this.sendableSubOrders = new ArrayList<SendableSubOrder>();
     }
 
-    public Order(int id, int customerId, ArrayList<SubOrder> subOrders) {
+    public Order(int id, long customerId, ArrayList<SubOrder> subOrders) {
         this.setId(id);
         this.setCustomerId(customerId);
         this.sendableSubOrders = new ArrayList<SendableSubOrder>();
         this.setSubOrders(subOrders);
+        orderState = State.NEW;
     }
 
     public int getId() {
@@ -29,11 +57,11 @@ public class Order implements Serializable {
         this.id = id;
     }
 
-    public int getCustomerId() {
+    public long getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(long customerId) {
         this.customerId = customerId;
     }
 
@@ -55,4 +83,12 @@ public class Order implements Serializable {
         sendableSubOrders.add(new SendableSubOrder(subOrder.getProduct().getId(), subOrder.getQuantity()));
     }
 
+    public State getOrderState() {
+        return orderState;
+    }
+
+    public void setOrderState(State orderState) {
+        this.orderState = orderState;
+         notifyObservers();
+    }
 }

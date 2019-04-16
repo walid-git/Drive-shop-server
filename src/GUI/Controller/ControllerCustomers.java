@@ -3,7 +3,7 @@ package GUI.Controller;
 
 import GUI.CustomerListCell;
 import GUI.Main;
-import GUI.PromptDialog;
+import GUI.Dialog.PromptDialog;
 import Shared.Customer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

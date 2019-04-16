@@ -19,6 +19,8 @@ public class DBHandler {
     PreparedStatement insertCustomerStatement;
     PreparedStatement deleteCustomerStatement;
     PreparedStatement editCustomerStatement;
+    PreparedStatement querryCustomerIdStatement;
+    PreparedStatement querryCustomerStatement;
 
     public DBHandler() {
         try {
@@ -44,10 +46,9 @@ public class DBHandler {
                     Queries.Product.COLUMN_DESCRIPTION + ", " +
                     Queries.Product.COLUMN_PRICE + ", " +
                     Queries.Product.COLUMN_ICON_LOCATION + ", " +
-                    Queries.Product.COLUMN_XLOCATION + ", " +
-                    Queries.Product.COLUMN_YLOCATION +
+                    Queries.Product.COLUMN_LOCATION +
                     ") " +
-                    "VALUES (?, ?, ?, ?, ?, ?);", new String[]{Queries.COLUMN_ID});
+                    "VALUES (?, ?, ?, ?, ?);", new String[]{Queries.COLUMN_ID});
 
             deleteProductStatement = connection.prepareStatement("DELETE FROM " + Queries.Product.TABLE_NAME +
                     " WHERE " + Queries.COLUMN_ID + " = ? ;");
@@ -57,8 +58,7 @@ public class DBHandler {
                     Queries.Product.COLUMN_DESCRIPTION + " = ?, " +
                     Queries.Product.COLUMN_PRICE + " = ?, " +
                     Queries.Product.COLUMN_ICON_LOCATION + " = ?, " +
-                    Queries.Product.COLUMN_XLOCATION + " = ?, " +
-                    Queries.Product.COLUMN_YLOCATION + " = ? " +
+                    Queries.Product.COLUMN_LOCATION + " = ? " +
                     "WHERE " + Queries.COLUMN_ID + " = ? ;", new String[]{Queries.COLUMN_ID});
             querrySingleProductStatement = connection.prepareStatement("SELECT * FROM " + Queries.Product.TABLE_NAME +
                     " WHERE " + Queries.COLUMN_ID + " = ? ;");
@@ -81,7 +81,13 @@ public class DBHandler {
                     Queries.Customers.COLUMN_PASSWORD + " = ? " +
                     "WHERE " + Queries.COLUMN_ID + " = ? ;", new String[]{Queries.COLUMN_ID}
             );
-
+            querryCustomerIdStatement = connection.prepareStatement("SELECT " + Queries.COLUMN_ID +
+                    " FROM " + Queries.Customers.TABLE_NAME + " WHERE " +
+                    Queries.Customers.COLUMN_PHONE + " = ? AND " +
+                    Queries.Customers.COLUMN_PASSWORD + " = ? ;");
+            querryCustomerStatement = connection.prepareStatement("SELECT * FROM " +
+                    Queries.Customers.TABLE_NAME + " WHERE " +
+                    Queries.COLUMN_ID + " = ? ;");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -94,17 +100,16 @@ public class DBHandler {
             if (DEBUG)
                 System.out.println("orders table created.");
             statement.execute(Queries.Product.CREATE_TABLE_QUERRY);
-            if (DEBUG)
-                System.out.println("Products table created.");
+            System.out.println("Products table created.");
             statement.execute(Queries.SubOrder.CREATE_TABLE_QUERRY);
             if (DEBUG)
                 System.out.println("Suborders table created.");
             statement.execute(Queries.Customers.CREATE_TABLE_QUERRY);//
             if (DEBUG)
                 System.out.println("Customers table created.");
-            statement.execute(Queries.Location.CREATE_TABLE_QUERRY);//
+            /*statement.execute(Queries.Location.CREATE_TABLE_QUERRY);//
             if (DEBUG)
-                System.out.println("Location table created.");
+                System.out.println("Location table created.");*/
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -123,8 +128,7 @@ public class DBHandler {
                     resultSet.getString(Queries.Product.COLUMN_DESCRIPTION),
                     path,
                     ImgUtils.imgToBytes(path),
-                    resultSet.getInt(Queries.Product.COLUMN_XLOCATION),
-                    resultSet.getInt(Queries.Product.COLUMN_YLOCATION)
+                    resultSet.getInt(Queries.Product.COLUMN_LOCATION)
             );
         } catch (SQLException e) {
             e.printStackTrace();
@@ -145,8 +149,7 @@ public class DBHandler {
                         rs.getString(Queries.Product.COLUMN_DESCRIPTION),
                         rs.getString(Queries.Product.COLUMN_ICON_LOCATION),
                         ImgUtils.imgToBytes(rs.getString(Queries.Product.COLUMN_ICON_LOCATION)),
-                        rs.getInt(Queries.Product.COLUMN_XLOCATION),
-                        rs.getInt(Queries.Product.COLUMN_YLOCATION)));
+                        rs.getInt(Queries.Product.COLUMN_LOCATION)));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -160,8 +163,7 @@ public class DBHandler {
         insertProductStatement.setString(2, p.getDescription());
         insertProductStatement.setInt(3, p.getPrice());
         insertProductStatement.setString(4, p.getIconPath());
-        insertProductStatement.setInt(5, p.getLocation().getX());
-        insertProductStatement.setInt(6, p.getLocation().getY());
+        insertProductStatement.setInt(5, p.getLocation());
         insertProductStatement.executeUpdate();
         insertProductStatement.getGeneratedKeys().next();
         return insertProductStatement.getGeneratedKeys().getInt(1);
@@ -195,9 +197,8 @@ public class DBHandler {
         editProductStatement.setString(2, updated.getDescription());
         editProductStatement.setInt(3, updated.getPrice());
         editProductStatement.setString(4, iconLoc);
-        editProductStatement.setInt(5, updated.getLocation().getX());
-        editProductStatement.setInt(6, updated.getLocation().getY());
-        editProductStatement.setInt(7, old.getId());
+        editProductStatement.setInt(5, updated.getLocation());
+        editProductStatement.setInt(6, old.getId());
         return editProductStatement.executeUpdate();
     }
 
@@ -238,7 +239,38 @@ public class DBHandler {
         editCustomerStatement.setString(6, updated.getPassword());
         editCustomerStatement.setInt(7, old.getId());
         return editCustomerStatement.executeUpdate();
+    }
 
+    public long querryCustomerId(String phone, String password) {
+        try {
+            querryCustomerIdStatement.setString(1,phone);
+            querryCustomerIdStatement.setString(2,password);
+            ResultSet resultSet = querryCustomerIdStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getLong(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public Customer querryCustomer(int id) {
+        try {
+            querryCustomerStatement.setInt(1,id);
+            ResultSet resultSet = querryCustomerStatement.executeQuery();
+            if (resultSet.next()) {
+                return new Customer(id,
+                        resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getString(6),
+                        resultSet.getString(5),
+                        resultSet.getString(4));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

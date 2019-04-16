@@ -1,7 +1,10 @@
 package Network;
 
+import GUI.Main;
 import Shared.Order;
 import backend.Queue;
+import com.sun.xml.internal.bind.v2.TODO;
+import javafx.application.Platform;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -14,6 +17,9 @@ public class OrdersServer extends Thread{
     private volatile Queue<Order> ordersQueue;
     private ServerSocket serverSocket;
     private volatile boolean runninig=true;
+
+    //@TODO to be romoved
+    static int ID = 0;
 
     public OrdersServer(Queue<Order> ordersQueue) {
         super("OrdersThread");
@@ -46,13 +52,17 @@ public class OrdersServer extends Thread{
                             ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
                             Order order;
                             while ((order = (Order) (inputStream.readObject())) != null) {
+                                order.setOrderState(Order.State.PENDING);
                                 OrdersServer.this.ordersQueue.add(order);
+                                Order finalOrder = order;
+                                finalOrder.setId(ID++);
+                                Platform.runLater(() -> Main.controllerOrders.orders.add(finalOrder));
                                        /* if (main.controllerOrders != null) {
                                             Order finalOrder = order;
                                             Platform.runLater(()->main.controllerOrders.orders.add(finalOrder));
                                             System.out.println("OdersServer : order added to observable list");
                                         }*/
-                                System.out.println("OdersServer : order added to queue");
+                                System.out.println("OdersServer : order added to queue customer = "+order.getCustomerId());
                             }
                             inputStream.close();
                             outputStream.close();

@@ -1,6 +1,6 @@
 package GUI.Controller;
 
-import GUI.ErrorDialog;
+import GUI.Dialog.ErrorDialog;
 import GUI.ImgUtils;
 import GUI.Main;
 import Shared.Product;
@@ -21,10 +21,7 @@ public class ControllerAddProduct {
     private boolean edit = false;
 
     @FXML
-    private TextField xLocation;
-
-    @FXML
-    private TextField yLocation;
+    private TextField pLocation;
 
     @FXML
     private TextField path;
@@ -74,8 +71,7 @@ public class ControllerAddProduct {
                         description.getText(),
                         path.getText(),
                         ImgUtils.imgToBytes(path.getText()),
-                        Integer.parseInt(xLocation.getText()),
-                        Integer.parseInt(yLocation.getText()));
+                        Integer.parseInt(pLocation.getText()));
                 if (!edit) {
                     int index = Main.handler.insertProduct(p);
                     if (index > 0) {
@@ -99,6 +95,7 @@ public class ControllerAddProduct {
             e.printStackTrace();
         } catch (Exception e) {
             ErrorDialog.show("Input error");
+            e.printStackTrace();
         }
 
     }
@@ -122,8 +119,7 @@ public class ControllerAddProduct {
             description.setText(selected.getDescription());
             price.setText(selected.getPrice() + "");
             path.setText(selected.getIconPath());
-            xLocation.setText(selected.getLocation().getX()+"");
-            yLocation.setText(selected.getLocation().getY()+"");
+            pLocation.setText(selected.getLocation()+"");
         }
 
     }

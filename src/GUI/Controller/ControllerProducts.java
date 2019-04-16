@@ -3,7 +3,7 @@ package GUI.Controller;
 import GUI.ImgUtils;
 import GUI.Main;
 import GUI.ProductListCell;
-import GUI.PromptDialog;
+import GUI.Dialog.PromptDialog;
 import Shared.Product;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

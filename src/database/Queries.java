@@ -31,8 +31,7 @@ public abstract class Queries {
         public static final String COLUMN_DESCRIPTION = "description";
         public static final String COLUMN_PRICE = "price";
         public static final String COLUMN_ICON_LOCATION = "icon_loc";
-        public static final String COLUMN_XLOCATION = "location_x";
-        public static final String COLUMN_YLOCATION = "location_y";
+        public static final String COLUMN_LOCATION = "location";
         public static final String CREATE_TABLE_QUERRY = "" +
                 "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -40,17 +39,15 @@ public abstract class Queries {
                 COLUMN_DESCRIPTION + " VARCHAR(40), " +
                 COLUMN_PRICE + " FLOAT NOT NULL, " +
                 COLUMN_ICON_LOCATION + " VARCHAR(150), " +
-                COLUMN_XLOCATION + " INTEGER NOT NULL, " +
-                COLUMN_YLOCATION + " INTEGER NOT NULL, " +
-                "CHECK("+COLUMN_XLOCATION+" >= 0 AND "+
-                COLUMN_YLOCATION+" >= 0 AND "
-                +COLUMN_PRICE+" >= 0)"+
+                COLUMN_LOCATION + " INTEGER NOT NULL, " +
+                "CHECK("+ COLUMN_LOCATION +" >= 0 AND "+
+                COLUMN_PRICE+" >= 0)"+
                 ");";
         public static final String QUERY_PRODUCTS = "" +
                 "SELECT * FROM " + TABLE_NAME + ";";
     }
 
-    public abstract class Location {
+    /*public abstract class Location {
         public static final String TABLE_NAME = "location";
         public static final String COLUMN_PRODUCT_ID = "product_id";
         public static final String COLUMN_XLOCATION = "location_x";
@@ -64,7 +61,7 @@ public abstract class Queries {
                 "CHECK(" + COLUMN_XLOCATION + " >= 0 AND " + COLUMN_YLOCATION + " >=0 )" +
                 ");";
     }
-
+*/
     public abstract class Customers {
         public static final String TABLE_NAME = "customers";
         public static final String COLUMN_FIRST_NAME = "first_name";

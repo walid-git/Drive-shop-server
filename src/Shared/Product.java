@@ -1,6 +1,5 @@
 package Shared;
 
-import Utils.Location;
 
 import java.io.Serializable;
 
@@ -10,18 +9,17 @@ public class Product implements Serializable {
     private String name;
     private String description;
     private String iconPath;
-    private Location location;
-
+    private int location;
     private byte img[];
 
-    public Product(int id, int price, String name, String description, String iconPath, byte[] img, int xLocation, int yLocation) {
+    public Product(int id, int price, String name, String description, String iconPath, byte[] img, int location) {
         this.id = id;
         this.price = price;
         this.name = name;
         this.description = description;
         this.iconPath = iconPath;
         this.img = img;
-        this.location = new Location(xLocation, yLocation);
+        this.location = location;
     }
 
     public Product(int id, int price, String name, String description, String iconPath, byte[] img) {
@@ -41,13 +39,6 @@ public class Product implements Serializable {
         this.img = img;
     }
 
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
 
     public byte[] getImg() {
         return img;
@@ -85,6 +76,13 @@ public class Product implements Serializable {
         return iconPath;
     }
 
+    public int getLocation() {
+        return location;
+    }
+
+    public void setLocation(int location) {
+        this.location = location;
+    }
 
     @Override
     public String toString() {

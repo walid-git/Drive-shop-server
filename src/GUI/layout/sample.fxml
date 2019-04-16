@@ -1,31 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
 <?import java.lang.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<TabPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" >
+<TabPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.Controller.ControllerMain">
    <tabs>
       <Tab closable="false" text="Orders">
          <content>
-             <fx:include source="orders.fxml" />
+             <fx:include fx:id="orders" source="orders.fxml"  />
          </content>
       </Tab>
-       <Tab closable="false" text="Products" >
+       <Tab closable="false" text="Products">
            <content>
                <fx:include source="products.fxml" />
            </content>
        </Tab>
-      <Tab closable="false" text="Robots">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-        </content>
-      </Tab>
+
       <Tab closable="false" text="Clients">
         <content>
             <fx:include source="customers.fxml" />

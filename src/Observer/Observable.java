@@ -1,9 +1,9 @@
-package observer;
+package Observer;
 
-public interface Observable<T> {
+public interface Observable {
     void addObserver(Observer observer);
 
-    void notifyObserver(T object);
+    void notifyObservers();
 
     void removeObserver(Observer observer);
 }

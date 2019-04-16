@@ -5,13 +5,13 @@ import Shared.Order;
 import java.io.IOException;
 import java.net.*;
 
-public class Robot {
+public class RobotOld {
 
     private int id;
     private String ipAddress;
     private int portListening;
 
-    public Robot(int id, String ipAddress, int portListening) {
+    public RobotOld(int id, String ipAddress, int portListening) {
         this.id = id;
         this.ipAddress = ipAddress;
         this.portListening = portListening;

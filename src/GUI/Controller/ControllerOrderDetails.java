@@ -1,6 +1,9 @@
 package GUI.Controller;
 
+import GUI.Main;
 import GUI.SubOrderListCell;
+import Shared.Customer;
+import Shared.Order;
 import Shared.SubOrder;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,8 +29,6 @@ public class ControllerOrderDetails {
     @FXML
     private Label customerId;
 
-
-
     @FXML
     private Label customerName;
 
@@ -42,9 +43,20 @@ public class ControllerOrderDetails {
        });
     }
 
-    public void setOrder(ArrayList<SubOrder> subOrders) {
+    public void setSubOrders(ArrayList<SubOrder> subOrders) {
         this.subOrders.setAll(subOrders);
+        int sum = 0;
+        for (SubOrder subOrder : subOrders) {
+            sum += subOrder.getQuantity() * subOrder.getProduct().getPrice();
+        }
+        totalPrice.setText(""+sum);
     }
 
+    public void setOrder(Order order) {
+        customerId.setText(order.getCustomerId()+"");
+        orderId.setText(order.getId()+"");
+        Customer c = Main.handler.querryCustomer((int)order.getCustomerId());
+        customerName.setText(c.getFirstName()+" "+c.getLastName());
+    }
 
 }

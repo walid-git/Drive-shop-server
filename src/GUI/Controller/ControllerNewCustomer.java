@@ -1,6 +1,6 @@
 package GUI.Controller;
 
-import GUI.ErrorDialog;
+import GUI.Dialog.ErrorDialog;
 import GUI.Main;
 import Shared.Customer;
 import javafx.event.ActionEvent;

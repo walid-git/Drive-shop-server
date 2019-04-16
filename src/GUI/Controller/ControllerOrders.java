@@ -1,9 +1,10 @@
 package GUI.Controller;
 
+import GUI.Map;
 import GUI.OrderListCell;
+import GUI.Robot;
 import Shared.*;
 import backend.Queue;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,35 +15,40 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import GUI.Main;
-import observer.Observer;
+import Observer.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ControllerOrders implements Observer<Queue<Order>>{
+public class ControllerOrders implements Observer{
 
 
     public volatile ObservableList<Order> orders;
 
     @FXML
-    private Label orderIdLabel;
+    private StackPane stackPane;
+
+    Map map;
+
 
     @FXML
     private ListView<Order> ordersListView;
 
-    @FXML
-    private Label statusLabel;
 
-    @FXML
-    private Label userIdLabel;
 
     @FXML
     void initialize() {
-        orders = FXCollections.observableList(Main.ordersQueue);
+        map = new Map(stackPane, 20,"default.map");
+        Robot robot = new Robot(map.getDimension() - 1, map.getDimension() - 1);
+        map.addRobot(robot);
+        Main.robotsQueue.add(robot);
+        robot.setPosition(19);
+        orders = FXCollections.observableArrayList();//Main.ordersQueue
         Main.ordersQueue.addObserver(this);
         ordersListView.setPlaceholder(new Label("Waiting for orders ..."));
         ordersListView.setItems(orders);
@@ -54,14 +60,14 @@ public class ControllerOrders implements Observer<Queue<Order>>{
         });
 
         //TODO : to be removed
-        Order o = new Order(2, 25);
+        /*Order o = new Order(2, 25);
         ArrayList<SendableSubOrder> sendableSubOrders = new ArrayList<>();
         sendableSubOrders.add(new SendableSubOrder(1, 21));
         sendableSubOrders.add(new SendableSubOrder(2, 3));
         sendableSubOrders.add(new SendableSubOrder(3, 5));
         sendableSubOrders.add(new SendableSubOrder(4, 7));
         o.setSendableSubOrders(sendableSubOrders);
-        orders.add(o);
+        orders.add(o);*/
     }
 
     @FXML
@@ -75,7 +81,9 @@ public class ControllerOrders implements Observer<Queue<Order>>{
             Scene sc = new Scene(root);
             stage.setScene(sc);
             stage.show();
-            ((ControllerOrderDetails) loader.getController()).setOrder(getSubOrders());
+            ControllerOrderDetails controller = (ControllerOrderDetails) loader.getController();
+            controller.setSubOrders(getSubOrders());
+            controller.setOrder(ordersListView.getSelectionModel().getSelectedItem());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -89,9 +97,12 @@ public class ControllerOrders implements Observer<Queue<Order>>{
     }
 
     @Override
-    public void onChange(Queue<Order> obj) {
+    public void update(Observable o) {
         System.out.println("OBSEREV ::: Calling on change");
-        Platform.runLater(()->ordersListView.setItems(FXCollections.observableList(obj)));
-
+      /*  if (o instanceof Queue) {
+            Queue<Order> q = (Queue) o;
+            if (q.size()>orders.size())
+                Platform.runLater(() -> orders.add(q.getLast()));
+        }*/
     }
 }
