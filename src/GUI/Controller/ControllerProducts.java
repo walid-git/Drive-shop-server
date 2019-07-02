@@ -1,6 +1,6 @@
 package GUI.Controller;
 
-import GUI.ImgUtils;
+import Utils.ImgUtils;
 import GUI.Main;
 import GUI.ProductListCell;
 import GUI.Dialog.PromptDialog;
@@ -30,6 +30,8 @@ public class ControllerProducts {
     @FXML
     public ListView<Product> productsListView;
 
+    FilteredList<Product> filteredList;
+
     @FXML
     private TextField searchBar;
 
@@ -49,6 +51,9 @@ public class ControllerProducts {
     private Label name;
 
     @FXML
+    private Label available_qty;
+
+    @FXML
     private Label price;
 
     @FXML
@@ -62,27 +67,32 @@ public class ControllerProducts {
             return new ProductListCell();
         });
         productsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                name.setText(newValue.getName());
-                        id.setText("ID: "+newValue.getId());
-                        price.setText(newValue.getPrice()+"DA");
+                    if (newValue != null) {
+                        name.setText(newValue.getName());
+                        id.setText("ID: " + newValue.getId());
+                        price.setText(newValue.getPrice() + "DA");
                         description.setText(newValue.getDescription());
+                        available_qty.setText("Available : "+newValue.getAvailable_qty());
                         buttonDelete.setDisable(false);
                         buttonEdit.setDisable(false);
-                        image.setImage(ImgUtils.getImageFromByteArray(newValue.getImg()));
+                        if (newValue.getImg().length > 0)
+                            image.setImage(ImgUtils.getImageFromByteArray(newValue.getImg()));
+                        else
+                            image.setImage(null);
                     } else {
                         name.setText("");
                         id.setText("");
                         price.setText("");
                         description.setText("");
+                        available_qty.setText("");
                         buttonDelete.setDisable(true);
                         buttonEdit.setDisable(true);
                         image.setImage(null);
                     }
                 }
         );
-        FilteredList<Product> filteredList = new FilteredList<>(products,null);
-        searchBar.textProperty().addListener(obs ->{
+        filteredList = new FilteredList<>(products, null);
+        searchBar.textProperty().addListener(obs -> {
             filteredList.setPredicate(p -> {
                 String input = searchBar.getText();
                 try {
@@ -107,7 +117,7 @@ public class ControllerProducts {
             Scene sc = new Scene(root);
             stage.setScene(sc);
             stage.show();
-            ((ControllerAddProduct)loader.getController()).setParent(this);
+            ((ControllerAddProduct) loader.getController()).setParent(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -116,7 +126,7 @@ public class ControllerProducts {
     @FXML
     void delete(ActionEvent event) {
         boolean b = PromptDialog.prompt("are you sure you want to delete this product ?");
-        if(Main.handler.deleteProduct(productsListView.getSelectionModel().getSelectedItem())>0)
+        if (Main.handler.deleteProduct(productsListView.getSelectionModel().getSelectedItem()) > 0)
             products.remove(productsListView.getSelectionModel().getSelectedIndex());
 
     }
@@ -132,11 +142,19 @@ public class ControllerProducts {
             Scene sc = new Scene(root);
             stage.setScene(sc);
             stage.show();
-            ((ControllerAddProduct)loader.getController()).setParent(this);
-            ((ControllerAddProduct)loader.getController()).setEdit(true);
+            ((ControllerAddProduct) loader.getController()).setParent(this);
+            ((ControllerAddProduct) loader.getController()).setEdit(true);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public void reload(){
+        System.out.println("ControllerProducts.reload");
+        int idx = productsListView.getSelectionModel().getSelectedIndex();
+        products = FXCollections.observableList(Main.handler.querryProducts());
+        filteredList = new FilteredList<>(products, null);
+        productsListView.setItems(filteredList);
+        productsListView.getSelectionModel().select(idx);
+    }
 }

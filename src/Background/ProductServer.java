@@ -1,4 +1,4 @@
-package Network;
+package Background;
 
 import Shared.Product;
 import database.DBHandler;
@@ -8,45 +8,19 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class ProductServer extends Thread {
+public class ProductServer extends Server {
 
     private ArrayList<Product> products;
-    ServerSocket serverSocket;
-    volatile boolean runninig = true;
-    DBHandler handler;
-
-    public ProductServer(ArrayList<Product> products) {
-        super("ProductsServerThread");
-        this.products = products;
-    }
 
     public ProductServer(DBHandler handler) {
-        this.handler = handler;
-    }
-
-    public ProductServer() {
-        super("ProductsServerThread");
-    }
-
-
-    public void setProducts(ArrayList<Product> products) {
-        this.products = products;
-    }
-
-    public void kill() {
-        this.runninig = false;
-        try {
-            this.serverSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        super("ProductServer",handler);
     }
 
     @Override
     public void run() {
         try {
             serverSocket = new ServerSocket(5563);
-            while (runninig) {
+            while (running) {
                 System.out.println("Products Server : waiting for client...");
                 Socket socket = serverSocket.accept();
                 if (handler != null)

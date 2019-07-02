@@ -2,6 +2,7 @@ package GUI;
 
 import GUI.Controller.ControllerProductListCell;
 import Shared.Product;
+import Utils.ImgUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ListCell;
@@ -31,7 +32,10 @@ public class ProductListCell extends ListCell<Product> {
             setText("");
             setGraphic(null);
         } else {
-            controller.icon.setImage(ImgUtils.getImageFromByteArray(item.getImg()));
+            if (item.getImg().length > 0)
+                controller.icon.setImage(ImgUtils.getImageFromByteArray(item.getImg()));
+            else
+                controller.icon.setImage(null);
             controller.name.setText(item.getName());
             controller.id.setText("id : " + item.getId());
             setGraphic(root);

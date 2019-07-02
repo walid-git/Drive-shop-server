@@ -10,9 +10,10 @@ public class Product implements Serializable {
     private String description;
     private String iconPath;
     private int location;
+    private int available_qty;
     private byte img[];
 
-    public Product(int id, int price, String name, String description, String iconPath, byte[] img, int location) {
+    public Product(int id, int price, String name, String description,int available_qty, String iconPath, byte[] img, int location) {
         this.id = id;
         this.price = price;
         this.name = name;
@@ -20,23 +21,26 @@ public class Product implements Serializable {
         this.iconPath = iconPath;
         this.img = img;
         this.location = location;
+        this.available_qty = available_qty;
     }
 
-    public Product(int id, int price, String name, String description, String iconPath, byte[] img) {
+    public Product(int id, int price, String name, String description, String iconPath,int available_qty, byte[] img) {
         this.id = id;
         this.price = price;
         this.name = name;
         this.description = description;
         this.iconPath = iconPath;
         this.img = img;
+        this.available_qty = available_qty;
     }
 
-    public Product(int id, int price, String name, String description, byte[] img) {
+    public Product(int id, int price, String name, String description,int available_qty, byte[] img) {
         this.id = id;
         this.price = price;
         this.name = name;
         this.description = description;
         this.img = img;
+        this.available_qty = available_qty;
     }
 
 
@@ -82,6 +86,14 @@ public class Product implements Serializable {
 
     public void setLocation(int location) {
         this.location = location;
+    }
+
+    public int getAvailable_qty() {
+        return available_qty;
+    }
+
+    public void setAvailable_qty(int available_qty) {
+        this.available_qty = available_qty;
     }
 
     @Override

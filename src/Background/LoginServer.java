@@ -1,4 +1,4 @@
-package Network;
+package Background;
 
 import database.DBHandler;
 
@@ -8,36 +8,17 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class LoginServer extends Thread {
-
-    ServerSocket serverSocket;
-    volatile boolean runninig = true;
-    DBHandler handler;
-
+public class LoginServer extends Server {
 
     public LoginServer(DBHandler handler) {
-        super("LoginServerThread");
-        this.handler = handler;
-    }
-
-    public LoginServer() {
-        super("LoginServerThread");
-    }
-
-    public void kill() {
-        this.runninig = false;
-        try {
-            this.serverSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        super("LoginServerThread",handler);
     }
 
     @Override
     public void run() {
         try {
             serverSocket = new ServerSocket(5565);
-            while (runninig) {
+            while (running) {
                 System.out.println("Login Server : waiting for client...");
                 Socket socket = serverSocket.accept();
                 System.out.println("Login Server : Client connected");

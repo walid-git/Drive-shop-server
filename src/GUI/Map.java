@@ -1,15 +1,16 @@
 package GUI;
 
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import Observer.Observable;
 import Observer.Observer;
-import GUI.Dialog.*;
 import javafx.scene.text.Font;
 
 import java.io.*;
@@ -18,9 +19,9 @@ import java.util.ArrayList;
 public class Map extends Canvas implements Observer {
 
 
-    public enum Cell {EMPTY, OBSTACLE, VISITED, START, DESTINATION}
+    public enum Cell {EMPTY, OBSTACLE, DESTINATION}
 
-    public enum MouseMode {OBSTACLE, START, DESTINATION}
+    public enum MouseMode {OBSTACLE, DESTINATION}
 
 
     private double rectWidth;
@@ -29,7 +30,8 @@ public class Map extends Canvas implements Observer {
     private Cell[][] map;
     private short p[][];
     private ArrayList<Robot> robots = new ArrayList<>();
-    Image robotImage;
+    Image robotImage1,robotImage2,robotImage3,robotImage4;
+
 
     public Map(StackPane stackPane, int dimension) {
         this.dimension = dimension;
@@ -43,7 +45,10 @@ public class Map extends Canvas implements Observer {
         newMap();
         setMouseMode(MouseMode.DESTINATION);
         System.out.println(this.getClass().getClassLoader().getResource("robot.png").getPath());
-        robotImage = new Image(this.getClass().getClassLoader().getResourceAsStream("robot.png"));
+        robotImage1 = new Image(this.getClass().getClassLoader().getResourceAsStream("robot.png"));
+        robotImage2 = new Image(this.getClass().getClassLoader().getResourceAsStream("robot2.png"));
+        robotImage3 = new Image(this.getClass().getClassLoader().getResourceAsStream("robot3.png"));
+        robotImage4 = new Image(this.getClass().getClassLoader().getResourceAsStream("robot4.png"));
     }
 
     public Map(StackPane stackPane, int dimension,String mapFile) {
@@ -56,10 +61,27 @@ public class Map extends Canvas implements Observer {
         heightProperty().addListener(evt -> draw());
         setFocusTraversable(true);
 //        newMap();
-        loadMap(new File(mapFile));
+        loadMap(new File(mapFile),true);
         setMouseMode(MouseMode.DESTINATION);
         System.out.println(this.getClass().getClassLoader().getResource("robot.png").getPath());
-        robotImage = new Image(this.getClass().getClassLoader().getResourceAsStream("robot.png"));
+        robotImage1 = new Image(this.getClass().getClassLoader().getResourceAsStream("robot.png"));
+        robotImage2 = new Image(this.getClass().getClassLoader().getResourceAsStream("robot2.png"));
+        robotImage3 = new Image(this.getClass().getClassLoader().getResourceAsStream("robot3.png"));
+        robotImage4 = new Image(this.getClass().getClassLoader().getResourceAsStream("robot4.png"));
+    }
+
+    public Map(StackPane stackPane, int dimension, String mapFile, EventHandler<MouseEvent> eventHandler) {
+        this.dimension = dimension;
+        stackPane.getChildren().add(this);
+        widthProperty().bind(stackPane.widthProperty());
+        heightProperty().bind(stackPane.heightProperty());
+        map = new Cell[dimension][dimension];
+        widthProperty().addListener(evt -> draw());
+        heightProperty().addListener(evt -> draw());
+        setFocusTraversable(true);
+//        newMap();
+        loadMap(new File(mapFile),false);
+        setOnMouseClicked(eventHandler);
     }
 
     public void newMap() {
@@ -74,11 +96,7 @@ public class Map extends Canvas implements Observer {
         map[node / dimension][node % dimension] = Cell.DESTINATION;
     }
 
-    public void setStart(int node) {
-        map[node / dimension][node % dimension] = Cell.START;
-    }
-
-    public void loadMap(File f) {
+    public void loadMap(File f,boolean calculatePath) {
         if (f.exists()) {
             FileInputStream is = null;
             try {
@@ -87,7 +105,8 @@ public class Map extends Canvas implements Observer {
                     for (int j = 0; j < dimension; j++)
                         map[i][j] = is.read() == 1 ? Cell.OBSTACLE : Cell.EMPTY;
                 System.out.println("map loaded !");
-                mapChanged();
+                if (calculatePath)
+                    mapChanged();
                 Platform.runLater(() -> draw());
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -127,11 +146,11 @@ public class Map extends Canvas implements Observer {
 //                else if (j == i + dimension || j == i - dimension || (j == i + 1 && !(j % dimension == 0)) || (j == i - 1 && !(j % dimension == dimension - 1)) || (j == i - dimension + 1 && !(j % dimension == 0)) || (j == i - dimension - 1 && !(j % dimension == dimension - 1)) || (j == i + dimension +1 && !(j % dimension == 0 )) || (j == i + dimension - 1 && !(j % dimension == dimension - 1)))
                 else if (j == i + dimension || j == i - dimension || (j == i + 1 && !(j % dimension == 0)) || (j == i - 1 && !(j % dimension == dimension - 1))) {
                     s[i][j] = 1;
-                    p[i][j] = -1;
+                    p[i][j] = (short) j;
                 }
             }
         }
-        LoadDialog.show(null);
+//        LoadDialog.show(null);
         long start = System.currentTimeMillis();
         System.out.println("starting for loops .. ");
         for (short k = 0; k < dimension * dimension; k++) {
@@ -146,9 +165,9 @@ public class Map extends Canvas implements Observer {
                 */    if ((long) s[i][j] > (long) s[i][k] + s[k][j]) {
 //                        System.out.println("k="+k+":: updating s["+i+"]["+j+"] and s["+j+"]["+i+"]" );
                         s[i][j] = (short) (s[i][k] + s[k][j]);
-                        p[i][j] = k;
+                        p[i][j] = p[i][k];
                         s[j][i] = (short) (s[j][k] + s[k][i]);
-                        p[j][i] = k;
+                        p[j][i] = p[j][k];
                     }
                 }
 
@@ -156,7 +175,7 @@ public class Map extends Canvas implements Observer {
 
         }
         System.out.println("Map.calculateShortestPaths :: DONE " + (System.currentTimeMillis() - start));
-        LoadDialog.close();
+//        LoadDialog.close();
 /*
 // print s[][] and p[][]
         System.out.println("value of s[][] ::");
@@ -215,20 +234,11 @@ public class Map extends Canvas implements Observer {
 //                System.out.println("Drawing node ::: "+map[i][j]);
                 if (map[i][j] == Cell.OBSTACLE)
                     gc.fillRect(j * rectWidth, i * rectHeight, rectWidth, rectHeight);
-                else if (map[i][j] == Cell.VISITED) {
-                    gc.setFill(Color.RED);
-                    gc.fillRect(j * rectWidth, i * rectHeight, rectWidth, rectHeight);
-                    gc.setFill(Color.AQUA);
-                } else if (map[i][j] == Cell.DESTINATION) {
+                else if (map[i][j] == Cell.DESTINATION) {
                     gc.setFill(Color.YELLOW);
                     gc.fillRect(j * rectWidth, i * rectHeight, rectWidth, rectHeight);
                     gc.setFill(Color.AQUA);
-                } else if (map[i][j] == Cell.START) {
-                    gc.setFill(Color.GREENYELLOW);
-                    gc.fillRect(j * rectWidth, i * rectHeight, rectWidth, rectHeight);
-                    gc.setFill(Color.AQUA);
                 }
-
                 gc.setFill(Color.BLACK);
                 gc.fillText(""+(i*dimension+j),j*rectWidth+rectWidth/2,i*rectHeight+rectHeight/2);
                 gc.setFill(Color.AQUA);
@@ -236,28 +246,34 @@ public class Map extends Canvas implements Observer {
         }
 
         gc.setFill(Color.BLACK);
-        for (Robot r : robots)
-            gc.drawImage(robotImage, r.getX() * rectWidth, r.getY() * rectHeight, rectWidth, rectHeight);
+        for (Robot r : robots) {
+            switch (r.getOrientation()) {
+                case 1:
+                    gc.drawImage(robotImage1,  r.getX() * rectWidth,r.getY() * rectHeight, rectWidth, rectHeight);
+                    break;
+                case 2:
+                    gc.drawImage(robotImage2,  r.getX() * rectWidth,r.getY() * rectHeight, rectWidth, rectHeight);
+                    break;
+                case 3:
+                    gc.drawImage(robotImage3,  r.getX() * rectWidth,r.getY() * rectHeight, rectWidth, rectHeight);
+                    break;
+                case 4:
+                    gc.drawImage(robotImage4,  r.getX() * rectWidth,r.getY() * rectHeight, rectWidth, rectHeight);
+                    break;
+            }
+
+        }
         //            gc.fillRect(r.getX() * rectWidth, r.getY() * rectHeight, rectWidth, rectHeight);
-
-
     }
 
     public int getDimension() {
         return dimension;
     }
 
-    public void setVisitedNode(int node) {
-        if (map[node / dimension][node % dimension] == Cell.EMPTY) {
-            map[node / dimension][node % dimension] = Cell.VISITED;
-            Platform.runLater(() -> draw());
-        }
-    }
-
-    public void clearVisitedNodes() {
+    public void clearDestination() {
         for (int i = 0; i < map.length; i++)
             for (int j = 0; j < map[0].length; j++)
-                if (map[i][j] == Cell.VISITED || map[i][j] == Cell.DESTINATION || map[i][j] == Cell.START)
+                if (map[i][j] == Cell.DESTINATION )
                     map[i][j] = Cell.EMPTY;
         Platform.runLater(() -> draw());
     }
@@ -315,21 +331,11 @@ public class Map extends Canvas implements Observer {
 //                new Thread(() -> robot.aStar(robot.getNode(), dest)).start();
                     if (map[dest / dimension][dest % dimension] != Cell.OBSTACLE)
                         for (Robot r : robots)
-                            new Thread(() -> r.moveTo(dest)).start();
+                            new Thread(() -> r.moveTo(dest,false)).start();
                 }
             });
-        } else if (mode == MouseMode.START) {
-            setOnMouseClicked(event -> {
-                int node = getNode(event.getX(), event.getY());
-                if (map[node / dimension][node % dimension] != Cell.OBSTACLE) {
-                    robots.get(0).setPosition(node);
-                    clearVisitedNodes();
-                }
-            });
-            setOnMouseDragged(null);
         } else if (mode == MouseMode.OBSTACLE) {
-            System.out.println("mode = [" + mode + "]");
-            clearVisitedNodes();
+            clearDestination();
             setOnMouseDragged(event -> {
                 int y = (int) (event.getY() / rectHeight);
                 int x = (int) (event.getX() / rectWidth);

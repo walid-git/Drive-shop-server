@@ -20,6 +20,7 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
                 <Label text="Product Name :" />
@@ -28,15 +29,22 @@
                 <TextField fx:id="description" promptText="Description" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label text="Price :" GridPane.rowIndex="2" />
             <TextField fx:id="price" promptText="Price" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label text="Icon Location :" GridPane.rowIndex="3" />
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <Label text="Icon Location :" GridPane.rowIndex="4" />
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <children>
                   <TextField fx:id="path" editable="false" promptText="Path" HBox.hgrow="ALWAYS" />
                   <Button mnemonicParsing="false" onAction="#browse" text="Browse" />
                </children>
             </HBox>
-            <Label text="Product location :" GridPane.rowIndex="4" />
-            <TextField fx:id="pLocation" promptText="Node" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label text="Product location :" GridPane.rowIndex="5" />
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+               <children>
+                  <TextField fx:id="pLocation" editable="false" promptText="Location" HBox.hgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" onAction="#setLocation" text="Search" />
+               </children>
+            </HBox>
+            <TextField fx:id="available_qty" promptText="Quantity" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label text="Available Quantity" GridPane.rowIndex="3" />
             </children>
          <padding>
             <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />

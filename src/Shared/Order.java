@@ -7,11 +7,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Order implements Serializable, Observable {
-    private int id;
+    private long id;
     private long customerId;
     private ArrayList<SendableSubOrder> sendableSubOrders;
 
-    public enum State{NEW,PENDING,IN_PROGRESS,READY}
+    public enum State{NEW,IN_PROGRESS,PENDING,READY}
 
     private State orderState;
 
@@ -34,14 +34,21 @@ public class Order implements Serializable, Observable {
         observers.remove(observer);
     }
 
-    public Order(int id, long customerId) {
+    public Order(long id, long customerId, State orderState) {
+        this.id = id;
+        this.customerId = customerId;
+        this.orderState = orderState;
+        this.sendableSubOrders = new ArrayList<SendableSubOrder>();
+    }
+
+    public Order(long id, long customerId) {
         this.setId(id);
         this.setCustomerId(customerId);
         orderState = State.NEW;
         this.sendableSubOrders = new ArrayList<SendableSubOrder>();
     }
 
-    public Order(int id, long customerId, ArrayList<SubOrder> subOrders) {
+    public Order(long id, long customerId, ArrayList<SubOrder> subOrders) {
         this.setId(id);
         this.setCustomerId(customerId);
         this.sendableSubOrders = new ArrayList<SendableSubOrder>();
@@ -49,11 +56,11 @@ public class Order implements Serializable, Observable {
         orderState = State.NEW;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

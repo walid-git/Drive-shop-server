@@ -2,6 +2,7 @@ package GUI;
 
 import GUI.Controller.ControllerSubOrderListCell;
 import Shared.SubOrder;
+import Utils.ImgUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ListCell;

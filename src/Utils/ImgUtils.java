@@ -1,8 +1,9 @@
-package GUI;
+package Utils;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 
+import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -31,10 +32,11 @@ public abstract class ImgUtils {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ImageIO.write(img, "png", outputStream);
             return outputStream.toByteArray();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new byte[]{};
         }
     }
+
 
 }

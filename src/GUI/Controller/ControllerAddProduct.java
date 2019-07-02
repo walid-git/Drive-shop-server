@@ -1,7 +1,8 @@
 package GUI.Controller;
 
 import GUI.Dialog.ErrorDialog;
-import GUI.ImgUtils;
+import Utils.ImgUtils;
+import GUI.LocationPickerStage;
 import GUI.Main;
 import Shared.Product;
 import javafx.event.ActionEvent;
@@ -22,6 +23,9 @@ public class ControllerAddProduct {
 
     @FXML
     private TextField pLocation;
+
+    @FXML
+    private TextField available_qty;
 
     @FXML
     private TextField path;
@@ -69,6 +73,7 @@ public class ControllerAddProduct {
                         Integer.parseInt(price.getText()),
                         name.getText(),
                         description.getText(),
+                        Integer.parseInt(available_qty.getText().toString()),
                         path.getText(),
                         ImgUtils.imgToBytes(path.getText()),
                         Integer.parseInt(pLocation.getText()));
@@ -107,6 +112,13 @@ public class ControllerAddProduct {
     }
 
     @FXML
+    void setLocation(ActionEvent event) {
+        long location = LocationPickerStage.pickLocation((Stage) ((Button) event.getSource()).getParent().getScene().getWindow());
+        if (location != -1)
+            pLocation.setText(location + "");
+    }
+
+    @FXML
     void initialize() {
     }
 
@@ -119,7 +131,8 @@ public class ControllerAddProduct {
             description.setText(selected.getDescription());
             price.setText(selected.getPrice() + "");
             path.setText(selected.getIconPath());
-            pLocation.setText(selected.getLocation()+"");
+            available_qty.setText(selected.getAvailable_qty()+"");
+            pLocation.setText(selected.getLocation() + "");
         }
 
     }

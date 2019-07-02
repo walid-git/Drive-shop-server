@@ -1,21 +1,18 @@
-package Network;
+package Background;
 
 import GUI.Main;
 import GUI.Robot;
 import Shared.Order;
 import Shared.SendableSubOrder;
 import Shared.SubOrder;
-import backend.Queue;
-import backend.RobotOld;
+import Utils.Queue;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
-public class RobotsController extends Thread {
+public class RobotsController extends BackgroundTask {
 
     private volatile Queue<Order> ordersQueue;
     private volatile Queue<Robot> robotsQueue;
-    private volatile boolean running = true;
 
     public RobotsController(Queue<Order> ordersQueue, Queue<Robot> robotsQueue) {
         super("RobotsControllerThread");
@@ -25,7 +22,7 @@ public class RobotsController extends Thread {
 
     @Override
     public void run() {
-        while (running) {
+        while (RobotsController.this.running) {
             try {
                 Order order;
                 order = this.ordersQueue.pop();
@@ -33,6 +30,7 @@ public class RobotsController extends Thread {
                 Robot r = this.robotsQueue.pop();
                 System.out.println("Robot controllerOrders : Robot available");
                 order.setOrderState(Order.State.IN_PROGRESS);
+                Main.handler.updateOrderState(order);
                 r.processOrder(order,getSubOrders(order.getSendableSubOrders()));
             } catch (Exception e) {
                 System.out.println("Robot controller interrupted ");
@@ -40,7 +38,7 @@ public class RobotsController extends Thread {
             }
         }
     }
-
+    @Override
     public void kill() {
         running = false;
         this.interrupt();

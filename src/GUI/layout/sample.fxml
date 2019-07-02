@@ -13,7 +13,7 @@
       </Tab>
        <Tab closable="false" text="Products">
            <content>
-               <fx:include source="products.fxml" />
+               <fx:include fx:id="products" source="products.fxml" />
            </content>
        </Tab>
 

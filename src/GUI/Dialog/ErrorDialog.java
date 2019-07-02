@@ -8,6 +8,7 @@ public class ErrorDialog {
 
     public static void show(String message) {
         Alert dialog = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
+        dialog.setResizable(true);
         dialog.headerTextProperty().set(null);
         dialog.showAndWait();
     }
